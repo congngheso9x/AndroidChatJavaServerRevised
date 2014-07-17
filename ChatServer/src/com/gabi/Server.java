@@ -32,7 +32,7 @@ public class Server implements Runnable{
 
     public static void postMessage(String message){
         for(int i=0, counter=0; i<=maxClientId || counter<clientsOnline; i++) {
-            if(!(sockets[i].equals(null)) && sockets[i].isConnected()) {
+            if(sockets[i] != null && sockets[i].isConnected()) {
                 sendMessage(message, i);
                 counter++;
             }
@@ -48,8 +48,6 @@ public class Server implements Runnable{
 
             new Thread(checkForConnections).start();
 
-            closeRemainingStreams();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,7 +56,7 @@ public class Server implements Runnable{
     public static void communicate(int id) {
         try {
             String message = "";
-            while (!(message = bufferedReaders[id].readLine()).equals("Client> end") && sockets[id] != null && sockets[id].isConnected()) {
+            while (!((message = bufferedReaders[id].readLine()).equals("end")) && sockets[id] != null && sockets[id].isConnected()) {
                 postMessage("Client"+id+"> "+message);
             }
             closeStreams(id);
@@ -122,39 +120,13 @@ public class Server implements Runnable{
                     printStreams[id] = null;
 
                     sockets[id] = null;
+
+                    System.out.println("client "+id+" logged out");
                 } catch (IOException e) {
                     System.out.println("could not close connection with client "+id);
                     e.printStackTrace();
                 }
             }
-    }
-
-    public static void closeRemainingStreams(){
-        System.out.println("closing streams...");
-
-        for(int i=0; i<maxClientId; i++) {
-
-            if (inputStreamReaders[i] != null && printStreams[i] != null && bufferedReaders[i] != null && sockets[i].isConnected()) {
-                try {
-                    System.out.println("closing connections with client "+i+"...");
-                    inputStreamReaders[i].close();
-                    bufferedReaders[i].close();
-                    printStreams[i].close();
-
-                    sockets[i].close();
-
-                    inputStreamReaders[i] = null;
-                    bufferedReaders[i] = null;
-                    printStreams[i] = null;
-
-                    sockets[i] = null;
-                } catch (IOException e) {
-                    System.out.println("could not close connection with client "+i);
-                    e.printStackTrace();
-                }
-            }
-
-        }
     }
 
     public static void main(String[] args) {

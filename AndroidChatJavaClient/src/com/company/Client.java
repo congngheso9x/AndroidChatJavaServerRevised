@@ -82,7 +82,7 @@ public class Client extends JFrame {
 
             String message = "";
 
-            while(!(message = br.readLine()).equals("Server> end")){
+            while(!(message = br.readLine()).contains("> end")){
                 showMessage("\n"+message);
             }
 

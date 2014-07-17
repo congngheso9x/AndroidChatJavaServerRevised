@@ -104,14 +104,18 @@ public class UsersList {
 
         try {
 
+            System.out.println("Available users:\n-------------------------------------------------------------------");
+
             fileBufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream("usersList.txt")));
 
             while ((userAndPass = fileBufferedReader.readLine()) != null) {
 
                 stringTokenizer = new StringTokenizer(userAndPass);
 
-                user = stringTokenizer.nextToken();
+                System.out.println(user = stringTokenizer.nextToken());
             }
+
+            System.out.println("-------------------------------------------------------------------");
 
             try {
                 Thread.sleep(50);
